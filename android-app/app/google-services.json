@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "222262678370",
+    "project_id": "printeasy-10d60",
+    "storage_bucket": "printeasy-10d60.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:222262678370:android:436230dfb5602cbcba123b",
+        "android_client_info": {
+          "package_name": "com.neuraltechnologies.printeasy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmUklUQCaFapi4kXn1zBQn9sNf0WCv4zs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+} 

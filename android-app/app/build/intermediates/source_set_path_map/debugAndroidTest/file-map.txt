@@ -1,0 +1,4 @@
+com.neuraltechnologies.printeasy.test.app-androidTest-0 C:\Users\vivek\Desktop\printeasy-v3\android-app\app\build\generated\res\resValues\androidTest\debug
+com.neuraltechnologies.printeasy.test.app-mergeDebugAndroidTestResources-1 C:\Users\vivek\Desktop\printeasy-v3\android-app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.neuraltechnologies.printeasy.test.app-mergeDebugAndroidTestResources-2 C:\Users\vivek\Desktop\printeasy-v3\android-app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.neuraltechnologies.printeasy.test.app-merged_res-3 C:\Users\vivek\Desktop\printeasy-v3\android-app\app\build\intermediates\merged_res\debugAndroidTest
