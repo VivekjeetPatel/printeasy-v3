@@ -1,5 +1,7 @@
 package com.neuraltechnologies.printeasy
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.print.PrintAttributes
 import android.print.PrintManager
@@ -9,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,15 +27,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Check if logged in
+        val sharedPref = getSharedPreferences("PrintEasyPrefs", Context.MODE_PRIVATE)
+        val shopName = sharedPref.getString("shopName", null)
+        if (shopName == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
 
-        // Start monitoring for new documents
-        monitorNewDocuments()
+        // Start monitoring for new documents for the logged-in shop
+        monitorNewDocuments(shopName)
     }
 
-    private fun monitorNewDocuments() {
+    private fun monitorNewDocuments(shopName: String) {
         db.collection("files")
+            .whereEqualTo("shopName", shopName)
+            .whereEqualTo("status", "pending")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_LONG).show()
@@ -40,18 +54,18 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 snapshot?.documents?.forEach { doc ->
-                    val data = doc.data
-                    if (data != null && !data.containsKey("printed")) {
-                        lifecycleScope.launch {
-                            try {
-                                val url = data["url"] as String
-                                val fileName = data["name"] as String
-                                downloadAndPrintDocument(url, fileName)
-                                // Mark as printed
-                                doc.reference.update("printed", true)
-                            } catch (e: Exception) {
-                                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
+                    lifecycleScope.launch {
+                        try {
+                            val url = doc.getString("url") ?: return@launch
+                            val fileName = doc.getString("name") ?: "document"
+                            downloadAndPrintDocument(url, fileName)
+                            // Mark as printed
+                            doc.reference.update(
+                                "status", "printed",
+                                "printedAt", FieldValue.serverTimestamp()
+                            )
+                        } catch (e: Exception) {
+                            Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
