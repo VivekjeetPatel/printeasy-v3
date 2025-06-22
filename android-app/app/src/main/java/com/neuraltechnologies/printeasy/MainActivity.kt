@@ -18,6 +18,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
+import android.util.Log
+import android.widget.TextView
+import android.net.Uri
+import androidx.core.content.FileProvider
 
 class MainActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
@@ -36,6 +40,12 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Update UI
+        val listeningTextView: TextView = findViewById(R.id.listeningTextView)
+        listeningTextView.text = "Listening for print jobs for: $shopName"
+        Log.d("PrintEasy", "Logged in with shopName: $shopName. Starting to monitor documents.")
+        Toast.makeText(this, "Listening for jobs for: $shopName", Toast.LENGTH_LONG).show()
+
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
 
@@ -49,11 +59,20 @@ class MainActivity : AppCompatActivity() {
             .whereEqualTo("status", "pending")
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_LONG).show()
+                    Log.e("PrintEasy", "Firestore listener error:", error)
+                    Toast.makeText(this, "Listener Error: ${error.message}", Toast.LENGTH_LONG).show()
                     return@addSnapshotListener
                 }
 
-                snapshot?.documents?.forEach { doc ->
+                if (snapshot == null || snapshot.isEmpty) {
+                    Log.d("PrintEasy", "No new pending documents found for $shopName.")
+                    return@addSnapshotListener
+                }
+
+                Log.d("PrintEasy", "Found ${snapshot.size()} new document(s) for $shopName.")
+                Toast.makeText(this, "Found ${snapshot.size()} new document(s).", Toast.LENGTH_SHORT).show()
+
+                snapshot.documents.forEach { doc ->
                     lifecycleScope.launch {
                         try {
                             val url = doc.getString("url") ?: return@launch
@@ -65,7 +84,8 @@ class MainActivity : AppCompatActivity() {
                                 "printedAt", FieldValue.serverTimestamp()
                             )
                         } catch (e: Exception) {
-                            Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                            Log.e("PrintEasy", "Error processing document: ${doc.id}", e)
+                            Toast.makeText(this@MainActivity, "Error processing document: ${e.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -93,26 +113,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun printDocument(file: File) {
-        val printManager = getSystemService(PRINT_SERVICE) as PrintManager
-        val jobName = "PrintEasy_${System.currentTimeMillis()}"
-
-        val webView = WebView(this)
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                val printAdapter = webView.createPrintDocumentAdapter(jobName)
-                printManager.print(
-                    jobName,
-                    printAdapter,
-                    PrintAttributes.Builder()
-                        .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-                        .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
-                        .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
-                        .build()
-                )
-            }
-        }
-
-        // Load the file into WebView
-        webView.loadUrl("file://${file.absolutePath}")
-    }
-} 
+    val printManager = getSystemService(Context.PRINT_SERVICE) as PrintManager
+    val printAdapter = PdfPrintAdapter(this, file.absolutePath)
+    printManager.print("PrintEasy Document", printAdapter, null)
+}
+}

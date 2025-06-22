@@ -10,8 +10,13 @@ color teal_700
 color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
-id progressBar
-id statusText
+drawable logo
+drawable rounded_card
+id listeningTextView
+id loginButton
+id shopCodeEditText
+id taglineText
+layout activity_login
 layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_foreground
@@ -24,3 +29,4 @@ string google_crash_reporting_api_key
 string google_storage_bucket
 string project_id
 style Theme.PrintEasy
+xml file_paths

@@ -3,21 +3,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#f8fafc"
     android:gravity="center"
     android:padding="24dp">
 
-    <EditText
-        android:id="@+id/shopCodeEditText"
+    <!-- Centered Card -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Shop Code"
-        android:inputType="text" />
+        android:orientation="vertical"
+        android:background="@drawable/rounded_card"
+        android:padding="24dp"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:clipToPadding="false"
+        android:backgroundTint="#FFFFFF"
+        android:backgroundTintMode="src_in"
+        android:layout_marginHorizontal="16dp">
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Login" />
+        <!-- PrintEasy Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PrintEasy"
+            android:textColor="#2563eb"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp" />
 
-</LinearLayout> 
+        <!-- Tagline inside card -->
+        <TextView
+            android:id="@+id/taglineText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="automating and securing printout process"
+            android:textColor="#2563eb"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:letterSpacing="0.02" />
+
+        <EditText
+            android:id="@+id/shopCodeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Shop Code"
+            android:inputType="text"
+            android:backgroundTint="#2563eb"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            android:backgroundTint="#2563eb"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+            android:letterSpacing="0.05" />
+    </LinearLayout>
+</LinearLayout>
